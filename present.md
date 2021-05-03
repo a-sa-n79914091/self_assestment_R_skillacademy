@@ -12,6 +12,8 @@ mengerjakan tugas berasal dari skillacademy dengan nama
 dataset\_superstore\_simple.csv dan ditampilkan beberapa value serta
 variable yang dapat dilihat seperti berikut.
 
+Superstore table.
+
 | order\_id      | order\_date | customer\_id | segment   | category        | sub\_category |    sales | quantity |    profit |
 |:---------------|:------------|:-------------|:----------|:----------------|:--------------|---------:|---------:|----------:|
 | CA-2016-152156 | 2016-11-08  | CG-12520     | Consumer  | Furniture       | Bookcases     | 261.9600 |        2 |   41.9136 |
@@ -20,7 +22,6 @@ variable yang dapat dilihat seperti berikut.
 | US-2015-108966 | 2015-10-11  | SO-20335     | Consumer  | Furniture       | Tables        | 957.5775 |        5 | -383.0310 |
 | US-2015-108966 | 2015-10-11  | SO-20335     | Consumer  | Office Supplies | Storage       |  22.3680 |        2 |    2.5164 |
 
-Superstore table.
 
 <br/> 1. Mencari **customer ID** yang memiliki **sales** paling besar.
 
