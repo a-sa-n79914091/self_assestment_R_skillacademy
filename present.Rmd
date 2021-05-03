@@ -1,0 +1,141 @@
+---
+title: "Self Assestment R Skillacademy"
+author: "Agung Surya Nugraha"
+date: "4/25/2021"
+output: 
+  html_document:
+    css: "style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(dplyr)
+library(ggplot2)
+```
+
+### Pendahuluan
+Markdown yang dibuat menggunakan R berisi soal serta jawaban dengan sedikit pembahasan dari program pelatihan PRAKERJA yaitu "Dasar Programing untuk Data Science". Data yang digunakan sebagai bahan dalam mengerjakan tugas berasal dari skillacademy dengan nama dataset_superstore_simple.csv dan ditampilkan beberapa value  serta variable yang dapat dilihat seperti berikut.
+
+```{r export data, echo=FALSE, results='asis'}
+superstore_data <- read.csv('Assessment R & Python_ Dataset_superstore_simple.csv', stringsAsFactors = FALSE)
+kable(superstore_data[1:5,], caption = 'Superstore table.')
+```
+<br/>
+1. Mencari **customer ID** yang memiliki **sales** paling besar.
+
+```{r soal1, echo=TRUE}
+superstore_data %>%
+  filter(sales == max(sales))%>%
+  select(customer_id,sales)
+```
+<br/>
+2. Mencari **sub-category** beserta total **profit** berdasarkan **category** "Office Suplies".
+
+```{r soal 2, echo=TRUE, message=FALSE, warning=FALSE}
+superstore_data %>% 
+  group_by(sub_category) %>%
+  filter(category == 'Office Supplies') %>%
+  summarise(total_profit = sum(profit))
+```
+<br/>
+3. Berapa banyak **order** yang menghasilkan **profit** negatif(rugi).
+
+```{r soal 3, echo=TRUE}
+order_with_negatif_profit <- superstore_data %>%
+  filter(profit < 0)
+
+count(order_with_negatif_profit)
+```
+<br/>
+4. Mencari total sales terbanyak antara 3 customer_id yaitu: JE-16165, KH-16510, AD-10180.
+
+```{r soal 4, echo=TRUE}
+superstore_data %>%
+  group_by(customer_id) %>%
+  filter(customer_id =='JE-16165' | customer_id == 'KH-16510' | customer_id == 'AD-10180') %>%
+  summarise(total_sales = sum(sales)) %>%
+  arrange(desc(total_sales))
+```
+<br/>
+5. Membuat data frame baru berisi total sales, jumlah customsr dan total profit tiap tahun.
+```{r soal 5, echo=TRUE}
+superstore_data$order_date <- as.Date(paste(superstore_data$order_date,sep=""))
+
+superstore_data %>%
+  mutate(year = format(order_date, format="%Y")) %>%
+  group_by(year) %>%
+  summarise(total_customer = n_distinct(customer_id), total_sales = sum(sales))
+```
+<br/>
+6. Buatlah scatterplot antara sales dan profit untuk data di tahun 2014-2015 saja, bedakan warnanya antara tahun 2014 dan tahun 2015.
+
+```{r soal 6 data, message=FALSE, warning=FALSE, include=FALSE}
+sales_profit_scatter_data <- superstore_data %>% 
+  mutate(year = format(order_date, format="%Y")) %>%
+  filter(year == 2014 | year == 2015) %>%
+  select(year,sales,profit)
+```
+```{r soal 6 plot, echo=FALSE, message=FALSE, warning=FALSE}
+sales_profit_scatterplot <- ggplot(sales_profit_scatter_data, aes(x = sales, y = profit)) +
+  geom_point(aes(color = year)) +
+  geom_smooth(aes(color = year), method = lm, 
+              se = FALSE, fullrange = TRUE) +
+  labs(title = 'Sales vs Profit 2014-2015',
+       subtitle = 'Based on Dataset Superstore',
+       caption = 'R language tutorial',
+       fill = 'Year') +
+  xlab('Profit' ) +
+  ylab('Sales') +
+  theme(panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 16, face = 'bold'),
+        axis.title.x = element_text(margin = margin(t = 10),size = 12),
+        axis.title.y = element_text(margin = margin(r = 10),size = 12),
+        legend.spacing.y = unit(0.5, 'cm'),
+        legend.title = element_text(size = 12),
+        legend.title.align = 0.5,
+        legend.text = element_text(size = 8))
+
+plot(sales_profit_scatterplot)
+```
+<br/><br/>
+7. Buatlah barchart yang berisi total profit dari 10 customer dengan total sales tertinggi di tahun 2015.
+
+```{r soal 7 data, include=FALSE}
+higest10_2015_bar_data <- superstore_data %>%
+  mutate(year = format(order_date, format="%Y")) %>%
+  filter(year == 2015) %>%
+  group_by (year,customer_id) %>%
+  summarise(total_sales = sum(sales), total_profit = sum(profit)) %>%
+  arrange(desc(total_sales)) %>%
+  head(n = 10L) %>%
+  arrange(desc(total_profit))
+```
+```{r soal 7 plot, echo=FALSE}
+customer_profit_barchart <- ggplot(higest10_2015_bar_data, aes(x = reorder(customer_id, total_sales), y = total_profit, fill = total_sales)) + 
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(title = 'Profit Customer Terhadap 10 Penjualan Tertinggi',
+       subtitle = 'Based on Dataset Superstore',
+       caption = 'R language tutorial',
+       fill = 'Sales') +
+  xlab('Customer ID' ) +
+  ylab('Profit') +
+  theme(panel.background = element_blank(),
+        axis.line = element_line(colour = "grey"),
+        plot.title = element_text(size = 16, face = 'bold'),
+        axis.title.x = element_text(margin = margin(t = 10),size = 12),
+        axis.title.y = element_text(margin = margin(r = 10),size = 12),
+        legend.spacing.y = unit(0.5, 'cm'),
+        legend.title = element_text(size = 12),
+        legend.title.align = 0.5,
+        legend.text = element_text(size = 8)) +
+  scale_fill_gradientn(colours = rainbow(5))
+
+plot(customer_profit_barchart)
+```
+<br><br>
+
+### Summary
+Dengan mengerjakan beberapa soal tersebut, dimaksudkan untuk lebih mengenal dasar-dasar pengunaan library dan beberapa fungsi yang digunakan dalam melakukan manipulasi data serta pembuatan visualisasi sederhana.
