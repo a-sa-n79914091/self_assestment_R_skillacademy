@@ -5,10 +5,11 @@ date: "4/25/2021"
 output: 
   html_document:
     css: "style.css"
+    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.path = "README_figs/README-")
 library(knitr)
 library(dplyr)
 library(ggplot2)
